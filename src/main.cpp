@@ -11,7 +11,6 @@ void setup()
   // Set the pin modes
   pinMode(config.BUZZER_PIN, OUTPUT_12MA);
   tone(config.BUZZER_PIN, 1000, 250);
-  delay(2000);
 
   // Start the pc Serial
   Serial.begin(config.PC_BAUDRATE);
