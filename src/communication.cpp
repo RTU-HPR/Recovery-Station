@@ -1,5 +1,16 @@
 #include <communication.h>
 
+bool Communication::beginRangingLora(Ranging_Wrapper::Mode &ranging_mode, Ranging_Wrapper::Lora_Device &ranging_device)
+{
+  String status = _ranging.init(ranging_mode, ranging_device);
+
+  if (status != "")
+  {
+    return false;
+  }
+  return true;
+}
+
 bool Communication::beginRadioOne(RadioLib_Wrapper<radio_module>::Radio_Config &radio_config_one)
 {
   // Create a radio object
@@ -26,6 +37,15 @@ bool Communication::beginRadioTwo(RadioLib_Wrapper<radio_module>::Radio_Config &
   }
 
   return true;
+}
+
+void Communication::runRanging(Config &config)
+{
+  if (_ranging.slave_reenable(config.RANGING_LORA_TIMEOUT, _slave))
+  {
+    // Turn on buzzer
+    tone(config.BUZZER_PIN, 1000, 250);
+  }
 }
 
 bool Communication::sendRadioOne(byte *bytes, size_t size)

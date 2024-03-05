@@ -7,6 +7,15 @@ public:
   RadioLib_Wrapper<radio_module> *_radio_one;
   RadioLib_Wrapper<radio_module> *_radio_two;
 
+  Ranging_Wrapper _ranging;
+  Ranging_Wrapper::Ranging_Slave _slave
+  {
+    {0.0, 0.0}, // in degrees
+    0x12345678
+  };
+
+  bool beginRangingLora(Ranging_Wrapper::Mode &ranging_mode, Ranging_Wrapper::Lora_Device &ranging_device);
+
   /**
    * @brief Initialise the Communication Radio
    * @param config Radio config object
@@ -18,6 +27,8 @@ public:
    * @param config Radio config object
    */
   bool beginRadioTwo(RadioLib_Wrapper<radio_module>::Radio_Config &radio_config_two);
+
+  void runRanging(Config &config);
 
   /**
    * @brief Sends the provided message using LoRa
@@ -42,7 +53,7 @@ public:
    * @param rssi The RSSI of the received message
    * @param snr The SNR of the received message
    * @param frequency The frequency of the received message
-  */
+   */
   bool receiveRadioOne(byte *&msg, uint16_t &msg_length, float &rssi, float &snr, double &frequency);
 
   /**
@@ -52,6 +63,6 @@ public:
    * @param rssi The RSSI of the received message
    * @param snr The SNR of the received message
    * @param frequency The frequency of the received message
-  */
+   */
   bool receiveRadioTwo(byte *&msg, uint16_t &msg_length, float &rssi, float &snr, double &frequency);
 };
