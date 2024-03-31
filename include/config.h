@@ -36,7 +36,7 @@ public:
       .spreading = 11,
       .coding_rate = 8,
       .signal_bw = 62.5,
-      .frequency_correction = true,
+      .frequency_correction = false,
       .spi_bus = &SPI1 // SPI bus used by radio
   };
 
@@ -56,7 +56,7 @@ public:
       .spreading = 11,
       .coding_rate = 8,
       .signal_bw = 62.5,
-      .frequency_correction = true,
+      .frequency_correction = false,
       .spi_bus = &SPI1 // SPI bus used by radio
   };
 
@@ -66,7 +66,7 @@ public:
 
   // RANGING
   Ranging_Wrapper::Mode ranging_mode = Ranging_Wrapper::Mode::SLAVE;
-  const int RANGING_LORA_TIMEOUT = 200;
+  const int RANGING_LORA_TIMEOUT = 2000;
   Ranging_Wrapper::Lora_Device ranging_device =
       {
           .FREQUENCY = 2405.6,

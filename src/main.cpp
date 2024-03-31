@@ -38,10 +38,10 @@ void setup()
   }
 
   // Start the first radio
-  if (!communication.beginRadioOne(config.radio_config_one))
-  {
-    digitalWrite(config.BUZZER_PIN, HIGH);
-  }
+  // if (!communication.beginRadioOne(config.radio_config_one))
+  // {
+  //   digitalWrite(config.BUZZER_PIN, HIGH);
+  // }
 
   // Start the second radio
   if (!communication.beginRadioTwo(config.radio_config_two))
@@ -63,79 +63,79 @@ void loop()
 
   // RADIO ONE
   // Variables for the message
-  byte *msg = new byte[256];
-  uint16_t msg_length = 0;
-  float rssi = 0;
-  float snr = 0;
-  double frequency = 0;
-  bool checksum_good = false;
+  // byte *msg = new byte[256];
+  // uint16_t msg_length = 0;
+  // float rssi = 0;
+  // float snr = 0;
+  // double frequency = 0;
+  // bool checksum_good = false;
 
-  if (communication.receiveRadioOne(msg, msg_length, rssi, snr, frequency))
-  {
-    // Check if checksum matches
-    if (check_crc_16_cciit_of_ccsds_packet(msg, msg_length))
-    {
-      checksum_good = true;
-    }
+  // if (communication.receiveRadioOne(msg, msg_length, rssi, snr, frequency))
+  // {
+  //   // Check if checksum matches
+  //   if (check_crc_16_cciit_of_ccsds_packet(msg, msg_length))
+  //   {
+  //     checksum_good = true;
+  //   }
 
-    if (checksum_good)
-    {
-      // Append RSSI and SNR to message
-      Converter rssi_converter;
-      rssi_converter.f = rssi;
-      msg[msg_length - 2] = rssi_converter.b[3];
-      msg[msg_length - 1] = rssi_converter.b[2];
-      msg[msg_length + 0] = rssi_converter.b[1];
-      msg[msg_length + 1] = rssi_converter.b[0];
+  //   if (checksum_good)
+  //   {
+  //     // Append RSSI and SNR to message
+  //     Converter rssi_converter;
+  //     rssi_converter.f = rssi;
+  //     msg[msg_length - 2] = rssi_converter.b[3];
+  //     msg[msg_length - 1] = rssi_converter.b[2];
+  //     msg[msg_length + 0] = rssi_converter.b[1];
+  //     msg[msg_length + 1] = rssi_converter.b[0];
 
-      Converter snr_converter;
-      snr_converter.f = snr;
-      msg[msg_length + 2] = snr_converter.b[3];
-      msg[msg_length + 3] = snr_converter.b[2];
-      msg[msg_length + 4] = snr_converter.b[1];
-      msg[msg_length + 5] = snr_converter.b[0];
+  //     Converter snr_converter;
+  //     snr_converter.f = snr;
+  //     msg[msg_length + 2] = snr_converter.b[3];
+  //     msg[msg_length + 3] = snr_converter.b[2];
+  //     msg[msg_length + 4] = snr_converter.b[1];
+  //     msg[msg_length + 5] = snr_converter.b[0];
 
-      msg_length += 6 + 2; // Added 6 bytes for RSSI and SNR, 2 bytes for new checksum
+  //     msg_length += 6 + 2; // Added 6 bytes for RSSI and SNR, 2 bytes for new checksum
 
-      // Add the new checksum to the message
-      add_crc_16_cciit_to_ccsds_packet(msg, msg_length);
+  //     // Add the new checksum to the message
+  //     add_crc_16_cciit_to_ccsds_packet(msg, msg_length);
 
-      Serial.write(msg, msg_length);
+  //     Serial.write(msg, msg_length);
 
-      // Parse the message
-      // uint16_t apid = 0;
-      // uint16_t sequence_count = 0;
-      // uint32_t gps_epoch_time = 0;
-      // uint16_t subseconds = 0;
-      // byte *packet_data = new byte[msg_length];
-      // uint16_t packet_data_length = 0;
-      // parse_ccsds_telemetry(msg, apid, sequence_count, gps_epoch_time, subseconds, packet_data, packet_data_length);
+  //     // Parse the message
+  //     // uint16_t apid = 0;
+  //     // uint16_t sequence_count = 0;
+  //     // uint32_t gps_epoch_time = 0;
+  //     // uint16_t subseconds = 0;
+  //     // byte *packet_data = new byte[msg_length];
+  //     // uint16_t packet_data_length = 0;
+  //     // parse_ccsds_telemetry(msg, apid, sequence_count, gps_epoch_time, subseconds, packet_data, packet_data_length);
 
-      // // Print the message
-      // if (apid == 100 || apid == 200)
-      // {
-      //   Converter data_values[6];
-      //   extract_ccsds_data_values(packet_data, data_values, "float,float,float,float,uint32,uint32");
+  //     // // Print the message
+  //     // if (apid == 100 || apid == 200)
+  //     // {
+  //     //   Converter data_values[6];
+  //     //   extract_ccsds_data_values(packet_data, data_values, "float,float,float,float,uint32,uint32");
 
-      //   Serial.println("Apid: " + String(apid) + " | Sequence Count: " + String(sequence_count) + " | GPS Epoch: " + String(gps_epoch_time) + "." + String(subseconds) + " | RSSI: " + String(rssi) + " | SNR: " + String(snr) + " | Frequency: " + String(frequency, 8));
-      //   Serial.println("Latitude: " + String(data_values[0].f, 6) + " | Longitude: " + String(data_values[1].f, 6) + " | Altitude: " + String(data_values[2].f));
-      //   Serial.println("Baro Altitude: " + String(data_values[3].f) + " | Satellites: " + String(data_values[4].i32) + " | Info/Error in Queue: " + (data_values[5].i32 == 0 ? "False" : "True"));
-      // }
-      // else
-      // {
-      //   Serial.println("Received telemetry with APID: " + String(apid));
-      // }
-      // Free memory
-      // delete[] packet_data;
-    }
-    else if (!checksum_good)
-    {
-      // Serial.println("Packet with invalid checksum received!");
-    }
-    // Serial.println();
-  }
+  //     //   Serial.println("Apid: " + String(apid) + " | Sequence Count: " + String(sequence_count) + " | GPS Epoch: " + String(gps_epoch_time) + "." + String(subseconds) + " | RSSI: " + String(rssi) + " | SNR: " + String(snr) + " | Frequency: " + String(frequency, 8));
+  //     //   Serial.println("Latitude: " + String(data_values[0].f, 6) + " | Longitude: " + String(data_values[1].f, 6) + " | Altitude: " + String(data_values[2].f));
+  //     //   Serial.println("Baro Altitude: " + String(data_values[3].f) + " | Satellites: " + String(data_values[4].i32) + " | Info/Error in Queue: " + (data_values[5].i32 == 0 ? "False" : "True"));
+  //     // }
+  //     // else
+  //     // {
+  //     //   Serial.println("Received telemetry with APID: " + String(apid));
+  //     // }
+  //     // Free memory
+  //     // delete[] packet_data;
+  //   }
+  //   else if (!checksum_good)
+  //   {
+  //     // Serial.println("Packet with invalid checksum received!");
+  //   }
+  //   // Serial.println();
+  // }
 
-  delete[] msg;
+  // delete[] msg;
 
   // RADIO TWO
   // Reset variables
