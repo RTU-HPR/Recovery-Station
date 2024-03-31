@@ -64,11 +64,11 @@ void loop()
   // RADIO ONE
   // Variables for the message
   // byte *msg = new byte[256];
-  // uint16_t msg_length = 0;
-  // float rssi = 0;
-  // float snr = 0;
-  // double frequency = 0;
-  // bool checksum_good = false;
+  uint16_t msg_length = 0;
+  float rssi = 0;
+  float snr = 0;
+  double frequency = 0;
+  bool checksum_good = false;
 
   // if (communication.receiveRadioOne(msg, msg_length, rssi, snr, frequency))
   // {
